@@ -1,0 +1,138 @@
+import static java.lang.Math.sqrt; 
+import java.util.Scanner;
+
+class Espera{
+	
+	public static void algunsSegundos(long s) {
+		try {
+			Thread.currentThread().sleep(s * 100);
+		}catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+class Tarefa1 extends Thread implements Runnable{
+	
+	public static double delta;
+	
+	@Override
+	public void run() {
+		delta = programa.b*programa.b - (4 * programa.a * programa.c);
+		
+		//System.out.println("valor de delta em t1: "+ delta);
+		
+	}
+}
+
+class Tarefa2 extends Thread implements Runnable{
+	
+	public static double raiz;
+	
+	@Override
+	public void run() {
+		raiz = sqrt(Tarefa1.delta);
+		
+		//System.out.println("valor da raiz em t2: "+ raiz);
+	}
+}
+
+class Tarefa3 extends Thread implements Runnable{
+	
+	public static double numeradorSoma, numeradorSub;
+	
+	@Override
+	public void run() {
+		numeradorSoma = -programa.b + Tarefa2.raiz;
+		numeradorSub = -programa.b - Tarefa2.raiz;
+		
+		//System.out.println("valor do numerador em t3: "+ numeradorSoma +" "+ numeradorSub);
+	}
+}
+
+class Tarefa4 extends Thread implements Runnable{
+	
+	public static double denominador;
+	
+	@Override
+	public void run() {
+		denominador = 2 * programa.a;
+		
+		//System.out.println("valor do denominador em t4: "+ denominador);
+	}
+}
+
+class Tarefa5 extends Thread implements Runnable{
+	
+	public static double raiz1, raiz2;
+	
+	@Override
+	public void run() {
+		raiz1 = Tarefa3.numeradorSoma / Tarefa4.denominador;
+		raiz2 = Tarefa3.numeradorSub / Tarefa4.denominador;
+		
+		System.out.println("Valores de x:");
+		System.out.println("x1 = " + raiz1);
+		System.out.println("x2 = " + raiz2);
+	}
+	
+}
+
+
+public class programa {
+	
+	public static double a, b, c;
+	static Scanner input = new Scanner(System.in);
+	
+	 
+	
+	public static void main(String[] args) {
+		
+		//leitura de dados
+		System.out.println("Insira o valor de 'a': ");
+		a = input.nextDouble();  
+		System.out.println("Insira o valor de 'b': ");
+		b = input.nextDouble();
+		System.out.println("Insira o valor de 'c': ");
+		c = input.nextDouble();
+		
+		if(a == 0) {
+			System.out.println("Para ser uma equacao quadratica o valor de 'a' " + 
+					"deve ser diferente de 0 (zero)");
+		}
+		else
+		{
+			//declaracao das threads
+			Tarefa1 t1 = new Tarefa1();
+			Thread tr1 = new Thread(t1);
+			
+			Tarefa2 t2 = new Tarefa2();
+			Thread tr2 = new Thread(t2);
+			
+			Tarefa3 t3 = new Tarefa3();
+			Thread tr3 = new Thread(t3);
+			
+			Tarefa4 t4 = new Tarefa4();
+			Thread tr4 = new Thread(t4);
+			
+			Tarefa5 t5 = new Tarefa5();
+			Thread tr5 = new Thread(t5);
+			
+			
+			
+			tr1.start();
+			Espera.algunsSegundos(1);
+			tr2.start();
+			Espera.algunsSegundos(1);
+			tr3.start();
+			Espera.algunsSegundos(1);
+			tr4.start();
+			Espera.algunsSegundos(1);
+			tr5.start();
+		}
+		
+
+	}
+
+}
